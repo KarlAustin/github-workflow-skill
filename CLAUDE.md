@@ -8,7 +8,7 @@ All development work is tracked via GitHub Issues. Every feature, bug, and refac
 |------|--------|------|
 | **Full** | brainstorm → plan → (deepen-plan?) → technical review → work → review → security-review → compound | Multiple files, architectural decisions, new features |
 | **Simple** | plan → work → security-review | Single-file changes, quick fixes (~30 min) |
-| **Hotfix** | work → review → merge | P1 emergencies |
+| **Hotfix** | work → review → merge | P1 emergencies (run `kdaws:security-review` post-merge as follow-up) |
 
 **Orchestrator commands:**
 - `kdaws:wf-full #N` — Runs full pipeline, pauses before implementation for confirmation
@@ -20,7 +20,7 @@ All development work is tracked via GitHub Issues. Every feature, bug, and refac
 - `/workflows:work #N`, `/workflows:review`, `/workflows:compound #N`
 - `/resolve_pr_parallel`, `/triage`
 
-Issue number (`#N`) is a **required argument** for all commands except `/workflows:review`.
+Issue number (`#N`) is a **required argument** for all commands except `/workflows:review` and `kdaws:security-review`.
 
 ### Issue Conventions
 

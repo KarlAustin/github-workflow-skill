@@ -5,7 +5,7 @@ description: >
   Commands: kdaws:wf-full, kdaws:wf-simple, kdaws:wf-setup, kdaws:project-setup, kdaws:security-review.
   Trigger: "work on issue", "start feature", "fix bug", describing new functionality or bugs.
 argument-hint: "#issue-number"
-allowed-tools: Bash(gh *), Bash(git *), Bash(semgrep *), Bash(phpstan *), Bash(composer audit *), Bash(govulncheck *), Bash(gosec *), Bash(gitleaks *), Read, Write, Edit, Task, Skill
+allowed-tools: Bash(gh *), Bash(git *), Bash(semgrep scan *), Bash(phpstan analyse *), Bash(composer audit *), Bash(govulncheck *), Bash(gosec *), Bash(gitleaks detect *), Bash(gitleaks protect *), Read, Write, Edit, Task, Skill
 ---
 
 # GitHub Issue-Driven Development Workflow
@@ -163,7 +163,7 @@ Before running, verify in order. Fail fast — stop on first failure with action
         ```yaml
         repos:
           - repo: https://github.com/gitleaks/gitleaks
-            rev: v8.21.2
+            rev: v8.30.0
             hooks:
               - id: gitleaks
         ```
@@ -187,7 +187,7 @@ All development work is tracked via GitHub Issues. Every feature, bug, and refac
 |------|--------|------|
 | **Full** | brainstorm → plan → (deepen-plan?) → technical review → work → review → security-review → compound | Multiple files, architectural decisions, new features |
 | **Simple** | plan → work → security-review | Single-file changes, quick fixes (~30 min) |
-| **Hotfix** | work → review → merge | P1 emergencies |
+| **Hotfix** | work → review → merge | P1 emergencies (run `kdaws:security-review` post-merge as follow-up) |
 
 **Orchestrator commands:**
 - `kdaws:wf-full #N` — Runs full pipeline, pauses before implementation for confirmation
@@ -199,7 +199,7 @@ All development work is tracked via GitHub Issues. Every feature, bug, and refac
 - `/workflows:work #N`, `/workflows:review`, `/workflows:compound #N`
 - `/resolve_pr_parallel`, `/triage`
 
-Issue number (`#N`) is a **required argument** for all commands except `/workflows:review`.
+Issue number (`#N`) is a **required argument** for all commands except `/workflows:review` and `kdaws:security-review`.
 
 ### Issue Conventions
 
@@ -319,16 +319,14 @@ Run the complete pipeline for issue `#N`.
 8. **Review** — Convert to ready-for-review via `gh pr ready`, then invoke `/workflows:review`. Posts review comments on PR.
 9. **Resolve fixes** — If review has findings, see [Rework and Rejection Paths](#rework-and-rejection-paths).
 10. **Security Review** — Invoke `kdaws:security-review`. If blocking findings:
-    - Ask developer: "Auto-fix (creates sub-issues with fix cycles) or fix manually?"
-    - **Auto-fix:** Group findings by file/severity into sub-issues (`fix: security - {description} from #{N}`). For each sub-issue, run plan → work → review. After all sub-issues resolved, re-run security review.
-    - **Manual fix:** Developer fixes, then re-runs `kdaws:security-review`.
+    - Fix findings directly on the current branch, then re-run `kdaws:security-review`.
     - Max 3 security review cycles. After 3rd failure, escalate to manual review.
     - If clean → proceed to compound.
 11. **Compound** — After merge, invoke `/workflows:compound #N`. Documents lessons learned.
 
 ### Between Stages
 
-- Post each stage's output to the GitHub issue as a collapsible comment (see format below)
+- Post each stage's output to the GitHub issue as a collapsible comment (see format below). Exception: `kdaws:security-review` posts to the PR.
 - The issue thread is the shared context — each stage reads prior outputs from GitHub
 - User can stop the pipeline at any point by saying "stop" or "pause"
 - If any stage fails, stop and report the error
@@ -343,7 +341,7 @@ Run the quick pipeline for issue `#N`.
 2. **Plan** — Invoke `/workflows:plan #N`. Post output as collapsible comment on issue.
 3. **Confirm before implementation** — Ask: "Plan ready. Start coding?". Wait for user confirmation.
 4. **Work** — Invoke `/workflows:work #N`. Creates branch and **draft** PR.
-5. **Security Review** — Invoke `kdaws:security-review`. Same fix flow as full pipeline step 10.
+5. **Security Review** — Invoke `kdaws:security-review`. Fix findings on current branch and re-run. Max 3 cycles, then escalate.
 
 No brainstorm, technical review, code review, or compound learning.
 
@@ -422,7 +420,7 @@ Run a security scan with AI-powered triage. Can be invoked standalone or as part
 
 ### Platform Detection
 
-Auto-detect on first run using project file signals:
+Auto-detect platform from project files on each run:
 
 | Signal | Platform |
 |--------|----------|
@@ -430,10 +428,9 @@ Auto-detect on first run using project file signals:
 | `wp-config.php` or `composer.json` with WordPress deps | WordPress |
 | `go.mod` | Go |
 | `composer.json` (no Laravel/WP signals) | PHP |
+| No signals detected | Fallback — run semgrep with `p/ci` only, warn that platform-specific rules are not configured |
 
-Multi-platform: detect ALL platforms present, store as list. Run tools for each.
-
-Confirm with user on first detection. Cache in `.kdaws/security.yml`. Subsequent runs use cache. If new platform files appear, prompt to update config.
+Multi-platform: detect ALL platforms present, run tools for each. Confirm with user on first detection.
 
 ### Tool Availability & Installation
 
@@ -448,47 +445,39 @@ Check required tools per platform. If missing, ask permission to install:
 | `gosec` | `go install github.com/securego/gosec/v2/cmd/gosec@latest` | Go |
 | `govulncheck` | `go install golang.org/x/vuln/cmd/govulncheck@latest` | Go |
 
-If a tool fails to install: retry once, then proceed with partial scan and warn which tools are missing.
+> **Note:** `gitleaks` is a pre-commit tool installed by `kdaws:wf-setup`, not a runtime dependency of `kdaws:security-review`.
 
 ### Scan Steps
 
-1. **Strip semgrep ignores** — Remove ALL `// nosemgrep` and `# nosemgrep` comments from entire codebase. Save original file contents for restore if needed.
-
-2. **Run scans** (parallel where possible):
+1. **Run scans** (parallel where possible, scoped to PR diff via `--baseline-commit`):
 
    PHP/Laravel/WordPress:
    ```bash
-   semgrep scan --config p/ci --config p/php [--config p/laravel] [--config p/phpcs-security-audit] --json
+   semgrep scan --disable-nosem --baseline-commit $(git merge-base HEAD main) --config p/ci --config p/php [--config p/laravel] [--config p/phpcs-security-audit] --json
    phpstan analyse --level 8 --no-progress --error-format=json
    composer audit --format=json
    ```
 
    Go:
    ```bash
-   semgrep scan --config p/ci --config p/golang --json
+   semgrep scan --disable-nosem --baseline-commit $(git merge-base HEAD main) --config p/ci --config p/golang --json
    govulncheck ./...
    gosec -fmt=json ./...
    ```
 
-3. **AI triage** — For each finding, Claude evaluates with full code context:
+2. **AI triage** — For each finding, Claude evaluates with full code context:
    - Real vulnerability → **block** (add to findings list)
-   - Noise/false positive → **dismiss** (restore ignore comment with justification: `// nosemgrep: {rule-id} — {reason}`)
+   - Noise/false positive → **dismiss** (add justified `// nosemgrep: {rule-id} — {reason}` comment as a deliberate commit)
    - Dependency CVE → assess if vulnerable code path is actually used. Exploitable → block. Theoretical → warn.
 
-4. **Post results to PR** — Collapsible comment with stage marker `security-review` and emoji `🛡️`:
-   - Summary: platform, tools run, finding counts, PASS/FAIL status
-   - Blocking findings: tool, rule, file:line, description, recommended fix
-   - Dismissed findings: tool, rule, file:line, reason for dismissal
-   - Dependency audit: CVE list with triage assessment
-   - New comment each scan cycle (preserves audit trail)
+3. **Post results to PR** — New collapsible comment each scan cycle (preserves audit trail):
 
    ```markdown
    <!-- workflow-stage: security-review, date: {YYYY-MM-DD}, command: kdaws:security-review -->
    <details>
    <summary>🛡️ Security Review — {YYYY-MM-DD} — {PASS|FAIL}</summary>
 
-   **Platform:** {platforms}
-   **Tools:** {tools run}
+   **Platform:** {platforms} · **Tools:** {tools run}
    **Findings:** {N blocking}, {N dismissed}, {N warnings}
 
    ### Blocking Findings
@@ -496,57 +485,17 @@ If a tool fails to install: retry once, then proceed with partial scan and warn 
    |------|------|----------|-------------|-----|
    | ... | ... | ... | ... | ... |
 
-   ### Dismissed (False Positives)
-   | Tool | Rule | Location | Reason |
-   |------|------|----------|--------|
-   | ... | ... | ... | ... |
-
-   ### Dependency Audit
-   | CVE | Package | Severity | Triage | Assessment |
-   |-----|---------|----------|--------|------------|
-   | ... | ... | ... | ... | ... |
+   **Dismissed:** {N} false positives (nosemgrep comments added with justification)
+   **Dependencies:** {N} CVEs triaged ({N} exploitable, {N} theoretical)
 
    ---
    *Generated by `kdaws:security-review` • Cycle {N}/3*
    </details>
    ```
 
-5. **Block or proceed:**
-   - Blocking findings exist → prompt developer:
-     - **Auto-fix:** Group findings by file/severity into sub-issues (`fix: security - {description} from #{N}`). Each sub-issue runs plan → work → review cycle. After all resolved, re-run security review.
-     - **Manual fix:** Developer fixes, re-runs `kdaws:security-review`.
+4. **Block or proceed:**
+   - Blocking findings exist → fix directly on the current branch, then re-run `kdaws:security-review`.
    - All clear → signal ready to proceed.
-
-### PHPStan Baseline
-
-On first run, if PHPStan reports > 50 errors, offer to generate a baseline:
-```
-PHPStan found {N} existing errors. Generate a baseline to focus only on new issues?
-```
-If accepted: `phpstan analyse --generate-baseline`. Include baseline in subsequent runs.
-
-### Configuration File: `.kdaws/security.yml`
-
-```yaml
-platforms:
-  - laravel
-  - go
-phpstan_level: 8
-semgrep_rulesets:
-  laravel:
-    - p/ci
-    - p/php
-    - p/laravel
-  go:
-    - p/ci
-    - p/golang
-```
-
-### Standalone Invocation
-
-When run outside a pipeline (not on a `{type}/{N}-{slug}` branch or no PR exists):
-- Output to terminal instead of PR comment
-- If on a workflow branch with a PR, offer to post results to PR
 
 ## Issue Creation
 
@@ -599,7 +548,7 @@ Examples:
 | Code review rejects PR entirely | Close the PR. Post a comment explaining why. Loop back to plan stage. |
 | Review finds simple fixes | Run `/resolve_pr_parallel` then re-run `/workflows:review`. Max 2 review cycles. |
 | Review finds complex fixes | Run `/triage` to walk through each with user. Then one final review pass. |
-| Security review finds issues | Auto-fix (grouped sub-issues with fix cycles) or manual fix, then re-run `kdaws:security-review`. Max 3 cycles, then escalate. |
+| Security review finds issues | Fix on current branch, re-run `kdaws:security-review`. Max 3 cycles, then escalate to manual review. |
 
 ## Review Cycle Limits
 
