@@ -276,7 +276,7 @@ This looks like a [feature/bug/refactor]:
   Workflow: [full/simple] ([reasoning])
 
 Options:
-  1. Run full workflow (kdaws:wf-full — brainstorm → plan → review → implement → review → learn)
+  1. Run full workflow (kdaws:wf-full — brainstorm → plan → technical review → implement → code review → learn)
   2. Run simple workflow (kdaws:wf-simple — plan → implement)
   3. Just create the issue for later
   4. Skip workflow, work directly
