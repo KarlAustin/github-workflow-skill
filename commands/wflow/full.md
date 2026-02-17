@@ -18,13 +18,13 @@ Run the complete pipeline for a GitHub issue. Every stage posts its output as a 
 
 1. **Verify compound-engineering plugin:**
    ```bash
-   ls ~/.claude/plugins/cache/*/compound-engineering/skills/ >/dev/null 2>&1
+   ls ~/.claude/plugins/cache/*/compound-engineering/*/.claude-plugin/plugin.json >/dev/null 2>&1
    ```
    If missing: "compound-engineering plugin is required. Install from the every-marketplace."
 
 2. **Verify quality plugin:**
    ```bash
-   ls ~/.claude/plugins/cache/*/quality/skills/security-review/SKILL.md >/dev/null 2>&1
+   ls ~/.claude/plugins/cache/*/quality/*/.claude-plugin/plugin.json >/dev/null 2>&1
    ```
    If missing: "quality plugin not installed. Security review will be skipped. Install with: `/plugin install quality@kdaws`. Continue without security review? [Y/n]"
 

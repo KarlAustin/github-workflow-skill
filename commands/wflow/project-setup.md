@@ -16,7 +16,7 @@ Create a new project from scratch: local repo, remote GitHub repo, README, initi
 
 Before running, verify in order. Fail fast — stop on first failure with actionable guidance.
 
-1. **compound-engineering plugin installed** — Check `ls ~/.claude/plugins/cache/*/compound-engineering/skills/ >/dev/null 2>&1`. Required for stage commands.
+1. **compound-engineering plugin installed** — Check `ls ~/.claude/plugins/cache/*/compound-engineering/*/.claude-plugin/plugin.json >/dev/null 2>&1`. Required for stage commands.
 2. **`gh` CLI installed** — Run `gh --version`.
 3. **`gh` authenticated** — Run `gh auth status`.
 

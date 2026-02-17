@@ -18,7 +18,7 @@ Before running, verify in order. Fail fast — stop on first failure with action
 
 > **Note:** When invoked from `wflow:project-setup`, skip all prerequisites below (they were already verified).
 
-1. **compound-engineering plugin installed** — Check `ls ~/.claude/plugins/cache/*/compound-engineering/skills/ >/dev/null 2>&1`. Required for stage commands.
+1. **compound-engineering plugin installed** — Check `ls ~/.claude/plugins/cache/*/compound-engineering/*/.claude-plugin/plugin.json >/dev/null 2>&1`. Required for stage commands.
 2. **`gh` CLI installed** — Run `gh --version`.
 3. **`gh` authenticated** — Run `gh auth status`.
 4. **Connected to a GitHub repo** — Run `gh repo view --json nameWithOwner`. If no repo detected, offer to run `wflow:project-setup`. If user accepts, invoke it and return (project-setup will chain back, skipping these prerequisites).
