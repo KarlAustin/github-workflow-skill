@@ -8,19 +8,19 @@ All development work is tracked via GitHub Issues. Every feature, bug, and refac
 |------|--------|------|
 | **Full** | brainstorm → plan → (deepen-plan?) → technical review → work → review → security-review → compound | Multiple files, architectural decisions, new features |
 | **Simple** | plan → work → security-review | Single-file changes, quick fixes (~30 min) |
-| **Hotfix** | work → review → merge | P1 emergencies (run `kdaws:security-review` post-merge as follow-up) |
+| **Hotfix** | work → review → merge | P1 emergencies (run `quality:security-review` post-merge as follow-up) |
 
 **Orchestrator commands:**
-- `kdaws:wf-full #N` — Runs full pipeline, pauses before implementation for confirmation
-- `kdaws:wf-simple #N` — Runs plan then implementation
-- `kdaws:security-review` — Runs security scan with AI triage (standalone or within pipeline)
+- `wflow:full #N` — Runs full pipeline, pauses before implementation for confirmation
+- `wflow:simple #N` — Runs plan then implementation
+- `quality:security-review` — Runs security scan with AI triage (standalone or within pipeline)
 
 **Individual stage commands:**
 - `/workflows:brainstorm #N`, `/workflows:plan #N`, `/deepen-plan`, `/technical_review #N`
 - `/workflows:work #N`, `/workflows:review`, `/workflows:compound #N`
 - `/resolve_pr_parallel`, `/triage`
 
-Issue number (`#N`) is a **required argument** for all commands except `/workflows:review` and `kdaws:security-review`.
+Issue number (`#N`) is a **required argument** for all commands except `/workflows:review`, `quality:security-review`, `wflow:setup`, and `wflow:project-setup`.
 
 ### Issue Conventions
 

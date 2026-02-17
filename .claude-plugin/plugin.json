@@ -1,0 +1,12 @@
+{
+  "name": "wflow",
+  "version": "1.0.0",
+  "description": "GitHub Issue-driven development workflow orchestrator. Commands: wflow:full, wflow:simple, wflow:setup, wflow:project-setup. REQUIRES: compound-engineering plugin + quality plugin.",
+  "author": {
+    "name": "KDAWS",
+    "url": "https://kdaws.com"
+  },
+  "repository": "https://github.com/KDAWS-com/cc-wflow",
+  "license": "MIT",
+  "keywords": ["github", "workflow", "issue-tracking", "orchestrator"]
+}
