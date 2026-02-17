@@ -6,6 +6,8 @@ Lookup tables, error handling, rework paths, and cross-plugin contracts. Load th
 
 These are compound-engineering plugin commands. Naming conventions (underscores in `/technical_review`, kebab in `/deepen-plan`) are upstream — not controlled by this skill. Validate issue number `#N` before use: digits only.
 
+**Important:** All stage outputs go to GitHub (issue or PR comments) — never to local files. If a stage command writes output to disk, capture the content, post it to GitHub, and delete the local file.
+
 | Command | Input | Output | Posts to | Stage / Emoji |
 |---------|-------|--------|----------|---------------|
 | `/workflows:brainstorm #N` | Issue body | Approaches, decisions, trade-offs | Issue (comment) | `brainstorm` 🔍 |

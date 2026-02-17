@@ -38,7 +38,9 @@ Issue number (`#N`) is a **required argument** for all commands except `/workflo
 - **Commits:** Conventional style with issue ref: `feat: add OAuth connection (#42)`
 - **Draft PRs:** `/workflows:work` creates draft PRs. `/workflows:review` converts to ready-for-review.
 
-### Stage Outputs
+### Stage Outputs — GitHub Only, Never Disk
+
+**All stage outputs MUST be posted in full to GitHub (issue comments or PR comments). NEVER write stage outputs to local files.** Do not split content between GitHub and disk. Do not write a summary to GitHub and details to a local file. The GitHub issue thread is the single source of truth.
 
 Each workflow stage posts a collapsible comment on the issue thread:
 

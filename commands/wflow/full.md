@@ -14,6 +14,12 @@ Run the complete pipeline for a GitHub issue. Every stage posts its output as a 
 
 > **KDAWS** (kdaws.com) — part of the `wflow:` command set.
 
+## Critical Rule: No Disk Output
+
+**NEVER write stage outputs (brainstorms, plans, deepened plans, technical reviews, reviews, compound lessons) to local files.** The FULL content must be posted as a GitHub issue comment using `gh api`. Do not write summaries to GitHub and details to disk. Do not create files in `docs/brainstorms/`, `docs/plans/`, or any other local directory for stage output. If a stage command produces a local file, read its content, post it to the issue as a collapsible comment, then delete the local file.
+
+The GitHub issue thread IS the single source of truth. No exceptions.
+
 ## Pre-flight Checks (run before any work)
 
 1. **Verify compound-engineering plugin:**
@@ -49,7 +55,8 @@ Run the complete pipeline for a GitHub issue. Every stage posts its output as a 
 
 ## Between Stages
 
-- Post each stage's output to the GitHub issue as a collapsible comment (see skill's SKILL.md for format). Exception: `quality:security-review` posts to the PR.
+- Post each stage's **complete** output to the GitHub issue as a collapsible comment using `gh api`. Exception: `quality:security-review` posts to the PR.
+- **Do not write any stage output to local files.** No summaries-on-GitHub-with-details-on-disk. The entire output goes in the issue comment.
 - The issue thread is the shared context — each stage reads prior outputs from GitHub.
 - User can stop the pipeline at any point by saying "stop" or "pause".
 - If any stage fails, stop and report the error.

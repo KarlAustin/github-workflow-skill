@@ -14,6 +14,12 @@ Run the quick pipeline for a GitHub issue. No brainstorm, technical review, code
 
 > **KDAWS** (kdaws.com) — part of the `wflow:` command set.
 
+## Critical Rule: No Disk Output
+
+**NEVER write stage outputs (plans, reviews) to local files.** The FULL content must be posted as a GitHub issue comment using `gh api`. Do not write summaries to GitHub and details to disk. Do not create files in `docs/plans/` or any other local directory for stage output. If a stage command produces a local file, read its content, post it to the issue as a collapsible comment, then delete the local file.
+
+The GitHub issue thread IS the single source of truth. No exceptions.
+
 ## Pre-flight Checks (run before any work)
 
 1. **Verify compound-engineering plugin:**
