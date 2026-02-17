@@ -43,7 +43,7 @@ Run the complete pipeline for a GitHub issue. Every stage posts its output as a 
 6. **Confirm before implementation** — Ask: "Plan reviewed. Ready to start coding?". Wait for user confirmation.
 7. **Work** — Invoke `/workflows:work #N`. Creates branch and **draft** PR.
 8. **Review** — Convert to ready-for-review via `gh pr ready`, then invoke `/workflows:review`. Posts review comments on PR.
-9. **Resolve fixes** — If review has findings, load `reference.md` from the skill directory for rework paths.
+9. **Resolve fixes** — If review has findings, load `reference.md` from the assets directory for rework paths.
 10. **Security Review** — If quality plugin was confirmed missing in pre-flight, skip and warn. Otherwise, invoke `quality:security-review` via the Skill tool: `skill: "quality:security-review"`. If blocking findings, fix on current branch and re-run. Max 3 cycles, then escalate to manual review.
 11. **Compound** — After merge, invoke `/workflows:compound #N`. Documents lessons learned.
 
@@ -102,8 +102,8 @@ Fix these manually or confirm as false positives before merging.
 
 ## Shared Reference
 
-For error handling, rework paths, and stage command reference, load `reference.md` from the skill directory:
+For error handling, rework paths, and stage command reference, load `reference.md` from the assets directory:
 ```bash
-CMD_DIR=$(ls -d ~/.claude/plugins/cache/*/wflow/commands/wflow 2>/dev/null | head -1)
-if [ -z "$CMD_DIR" ]; then CMD_DIR="./commands/wflow"; fi
+ASSETS_DIR=$(ls -d ~/.claude/plugins/cache/*/wflow/assets 2>/dev/null | head -1)
+if [ -z "$ASSETS_DIR" ]; then ASSETS_DIR="./assets"; fi
 ```

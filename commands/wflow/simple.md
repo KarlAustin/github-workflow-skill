@@ -70,8 +70,8 @@ Maximum 3 security review cycles per PR. After the third `quality:security-revie
 
 ## Shared Reference
 
-For error handling, rework paths, and stage command reference, load `reference.md` from the skill directory:
+For error handling, rework paths, and stage command reference, load `reference.md` from the assets directory:
 ```bash
-CMD_DIR=$(ls -d ~/.claude/plugins/cache/*/wflow/commands/wflow 2>/dev/null | head -1)
-if [ -z "$CMD_DIR" ]; then CMD_DIR="./commands/wflow"; fi
+ASSETS_DIR=$(ls -d ~/.claude/plugins/cache/*/wflow/assets 2>/dev/null | head -1)
+if [ -z "$ASSETS_DIR" ]; then ASSETS_DIR="./assets"; fi
 ```
