@@ -72,6 +72,6 @@ Maximum 3 security review cycles per PR. After the third `quality:security-revie
 
 For error handling, rework paths, and stage command reference, load `reference.md` from the skill directory:
 ```bash
-SKILL_DIR=$(ls -d ~/.claude/plugins/cache/*/wflow/skills/github-workflow 2>/dev/null | head -1)
-if [ -z "$SKILL_DIR" ]; then SKILL_DIR="./skills/github-workflow"; fi
+CMD_DIR=$(ls -d ~/.claude/plugins/cache/*/wflow/commands/wflow 2>/dev/null | head -1)
+if [ -z "$CMD_DIR" ]; then CMD_DIR="./commands/wflow"; fi
 ```

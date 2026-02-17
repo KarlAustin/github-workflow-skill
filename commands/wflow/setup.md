@@ -37,15 +37,15 @@ Before running, verify in order. Fail fast — stop on first failure with action
 2. Copy templates from the skill's `templates/` directory:
    ```bash
    # Resolve the skill's installation directory
-   SKILL_DIR=$(ls -d ~/.claude/plugins/cache/*/wflow/skills/github-workflow 2>/dev/null | head -1)
+   CMD_DIR=$(ls -d ~/.claude/plugins/cache/*/wflow/commands/wflow 2>/dev/null | head -1)
    # Fallback for local development
-   if [ -z "$SKILL_DIR" ]; then SKILL_DIR="./skills/github-workflow"; fi
+   if [ -z "$CMD_DIR" ]; then CMD_DIR="./commands/wflow"; fi
 
    mkdir -p .github/ISSUE_TEMPLATE
-   cp "$SKILL_DIR/templates/feature.md" .github/ISSUE_TEMPLATE/
-   cp "$SKILL_DIR/templates/bug.md" .github/ISSUE_TEMPLATE/
-   cp "$SKILL_DIR/templates/refactor.md" .github/ISSUE_TEMPLATE/
-   cp "$SKILL_DIR/templates/config.yml" .github/ISSUE_TEMPLATE/
+   cp "$CMD_DIR/templates/feature.md" .github/ISSUE_TEMPLATE/
+   cp "$CMD_DIR/templates/bug.md" .github/ISSUE_TEMPLATE/
+   cp "$CMD_DIR/templates/refactor.md" .github/ISSUE_TEMPLATE/
+   cp "$CMD_DIR/templates/config.yml" .github/ISSUE_TEMPLATE/
    ```
 3. Create labels (skip if they already exist):
    ```bash
