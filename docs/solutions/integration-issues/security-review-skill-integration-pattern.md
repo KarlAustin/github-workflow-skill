@@ -11,7 +11,7 @@ pr: "#4"
 
 # Security Review Stage: Skill Integration Pattern
 
-How we added a `kdaws:security-review` command to the GitHub workflow skill, and what we learned about skill authoring, tool permissions, and cross-reference consistency.
+How we added a `quality:security-review` command to the GitHub workflow skill, and what we learned about skill authoring, tool permissions, and cross-reference consistency.
 
 ## Problem
 
@@ -81,7 +81,7 @@ Auto-detect platform from project files on every run instead of caching in confi
 
 ### 5. Simplified fix workflow
 
-Fix directly on current branch, re-run `kdaws:security-review`. Max 3 cycles, then escalate to manual review. No sub-issue workflows.
+Fix directly on current branch, re-run `quality:security-review`. Max 3 cycles, then escalate to manual review. No sub-issue workflows.
 
 ## Prevention Strategies
 
@@ -106,5 +106,5 @@ Fix directly on current branch, re-run `kdaws:security-review`. Max 3 cycles, th
 ## Related Documentation
 
 - [Namespace Separation and Skill Consolidation](../skill-architecture/namespace-separation-and-skill-consolidation.md) — Prior architectural decisions from Issue #1/#2
-- [Issue #3](https://github.com/KarlAustin/github-workflow-skill/issues/3) — Feature request with brainstorm and plan comments
-- [PR #4](https://github.com/KarlAustin/github-workflow-skill/pull/4) — Implementation with 2-cycle review (14 findings, all resolved)
+- [Issue #3](https://github.com/KDAWS-com/cc-wflow/issues/3) — Feature request with brainstorm and plan comments
+- [PR #4](https://github.com/KDAWS-com/cc-wflow/pull/4) — Implementation with 2-cycle review (14 findings, all resolved)

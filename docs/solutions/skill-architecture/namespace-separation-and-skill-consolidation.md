@@ -12,7 +12,7 @@ A Claude Code skill had orchestrator commands sharing a namespace (`/workflows:*
 
 ### 1. Two-tier namespace ownership
 
-Orchestrator commands owned by the skill use `kdaws:wf-*`. Stage commands from the compound-engineering plugin keep their original names (`/workflows:*`, `/technical_review`, etc.). This makes ownership unambiguous for both humans and AI agents.
+Orchestrator commands owned by the skill use `wflow:*`. Stage commands from the compound-engineering plugin keep their original names (`/workflows:*`, `/technical_review`, etc.). This makes ownership unambiguous for both humans and AI agents.
 
 **Lesson:** When a skill orchestrates external plugin commands, use a distinct namespace prefix. Never share a namespace with your dependencies.
 
@@ -24,7 +24,7 @@ Merged `command-contracts.md` into `SKILL.md` and converted verbose per-command 
 
 ### 3. Prerequisite checks need explicit recursion guards
 
-`kdaws:project-setup` chains into `kdaws:wf-setup`, which can offer to run `kdaws:project-setup`. Without an explicit guard, an AI agent could loop. The fix: a visible blockquote at the top of `wf-setup` prerequisites saying "When invoked from `kdaws:project-setup`, skip all prerequisites below."
+`wflow:project-setup` chains into `wflow:setup`, which can offer to run `wflow:project-setup`. Without an explicit guard, an AI agent could loop. The fix: a visible blockquote at the top of `wf-setup` prerequisites saying "When invoked from `wflow:project-setup`, skip all prerequisites below."
 
 **Lesson:** When two commands can invoke each other, add the recursion guard at the *entry point* of the callee, not just in the caller's instructions. AI agents need the guard visible at the point where they make the decision.
 
