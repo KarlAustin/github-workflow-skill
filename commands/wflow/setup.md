@@ -134,6 +134,24 @@ Each workflow stage posts a collapsible comment on the issue thread:
 
 Emoji prefixes: 🔍 Brainstorm, 📋 Plan, 🔎 Technical Review, 🛡️ Security Review, 📚 Lessons Learned.
 
+### Testing
+
+Use `test:parallel` (from the `test-helper@kdaws` plugin) as the standard way to run tests. It auto-detects the framework, runs in parallel, and filters output to failures only — saving tokens and time.
+
+```
+/test:parallel                        # Auto-detect framework, run all tests
+/test:parallel jest                   # Force a specific framework
+/test:parallel -- --filter=Unit       # Pass extra args to the test runner
+/test:parallel pest -- --group=api    # Force framework + extra args
+```
+
+**When to use `test:parallel` vs. running tests directly:**
+- **Use `test:parallel`** for running the full suite or a filtered subset before a PR, after changes, or during the `work` stage. It handles parallelism and output filtering automatically.
+- **Run tests directly** (e.g., `./vendor/bin/phpunit tests/Unit/MyTest.php`) when debugging a single test file or when you need the full verbose output.
+- **Pipeline stages** (`wflow:full`, `wflow:simple`) do NOT auto-run tests — invoke `test:parallel` yourself at any point during the `work` stage.
+
+If `test-helper@kdaws` is not installed, run tests manually with the project's native test runner.
+
 ### Directory Status
 
 | Directory | Status |
